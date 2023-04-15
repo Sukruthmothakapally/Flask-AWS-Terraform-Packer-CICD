@@ -30,7 +30,7 @@ jobs:
     - name: 'Apply Terraform'
       run: |
         cd aws-infra
-        terraform apply -var-file=values.tfvars --auto-approve
+        terraform apply -var-file=values.tfvars --auto-approve -var="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
       env:  
         AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
