@@ -26,11 +26,6 @@ jobs:
       run: |
         cd aws-infra
         terraform fmt
-    
-    - name: 'Decode values.tfvars'
-      run: |
-        cd  aws-infra
-        echo "${{ secrets.VALUES_TFVARS }}" | base64 --decode > values.tfvars
 
     - name: 'Apply Terraform'
       run: |
