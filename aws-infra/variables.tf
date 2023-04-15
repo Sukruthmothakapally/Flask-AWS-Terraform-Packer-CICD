@@ -1,8 +1,3 @@
-variable "region" {
-  type        = string
-  description = "The AWS region in which to create the VPC and networking resources."
-}
-
 variable "vpc_name" {
   type        = string
   description = "The name of the VPC to create."
@@ -26,11 +21,6 @@ variable "private_subnet_cidr_blocks" {
 variable "availability_zones" {
   type        = list(string)
   description = "A list of availability zones in the specified region."
-}
-
-variable "profile" {
-  type        = string
-  description = "the name of the aws profile to use for authentication"
 }
 
 variable "public_route_table_enabled" {
