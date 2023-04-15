@@ -1,0 +1,42 @@
+name: 'Terraform Apply'
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 'Checkout'
+      uses: actions/checkout@v2
+
+    - name: 'Setup Terraform'
+      uses: hashicorp/setup-terraform@v1
+
+    - name: 'Initialize Terraform'
+      run: |
+        cd aws-infra
+        terraform init
+        
+    - name: 'Format Terraform'
+      run: |
+        cd aws-infra
+        terraform fmt
+    
+    - name: 'Decode values.tfvars'
+      run: |
+        echo "${{ secrets.VALUES_TFVARS }}" | base64 --decode > values.tfvars
+        
+    - name: 'Validate Terraform'
+      run: |
+        cd aws-infra
+        terraform validate -var-file=values.tfvars
+
+    - name: 'Apply Terraform'
+      run: |
+        cd aws-infra
+        terraform apply -var-file=values.tfvars --auto-approve
