@@ -1,0 +1,85 @@
+name: Pull Request Merged Workflow
+on:
+  pull_request:
+    types: [closed]
+    
+jobs:
+  test:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    env:
+      DISABLE_DATABASE: true
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+          
+      - name: Install dependencies
+        run: |
+          cd webapp
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run unit tests
+        run: |
+          cd webapp
+          python test_app.py
+        
+      - name: Build Flask
+        run: |
+          cd webapp
+          mkdir ami && cp app.py requirements.txt packer_amibuild.json app.service cloudwatch-config.json ami
+          cd ami && ls -all
+          
+      - name: Check working directory
+        run: |
+          cd webapp/ami
+          pwd
+          ls -all
+          
+      - name: Build AMI using Packer
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: build
+          arguments: "-color=false -on-error=abort"
+          target: packer_amibuild.json
+          working_directory: webapp/ami
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          
+      - name: Checkout manifest.json file
+        run: cat webapp/ami/manifest.json
+            
+      - name: Install AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --update
+
+      - name: Copy AMI Artifacts and create a new Launch Template version
+        env:
+            AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
+            AWS_DEFAULT_REGION: us-west-2
+        working-directory: webapp/ami
+        run: |
+          AMI_ID=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2)
+          echo $AMI_ID
+          LT_ID=$(aws ec2 describe-launch-templates --launch-template-name asg_launch_config | jq '.LaunchTemplates[].LaunchTemplateId')
+          LT_ID="${LT_ID%\"}"
+          LT_ID="${LT_ID#\"}"
+          echo $LT_ID
+          aws ec2 create-launch-template-version --launch-template-id $LT_ID  --version-description WebVersion2 --source-version 1 --launch-template-data "ImageId=$AMI_ID"
+          aws autoscaling update-auto-scaling-group --auto-scaling-group-name csye6225-asg-spring2023 --launch-template LaunchTemplateId=$LT_ID,Version='$Latest'
+        
+      - name: Refresh instances in Auto Scaling group
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-west-2
+          
+        run: |
+          aws autoscaling start-instance-refresh --auto-scaling-group-name csye6225-asg-spring2023
