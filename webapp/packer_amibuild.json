@@ -1,0 +1,84 @@
+{
+  "variables": {
+    "access_key_id": "",
+    "secret_access_key": ""},
+  
+    "builders": [
+        {
+            "type": "amazon-ebs",
+            "access_key": "{{user `access_key_id`}}",
+            "secret_key": "{{user `secret_access_key`}}",
+            "region": "us-west-2",
+            "source_ami": "ami-0f1a5f5ada0e7da53",
+            "instance_type": "t2.micro",
+            "ssh_username": "ec2-user",
+            "ami_name": "webapp-{{timestamp}}",
+	    "ami_users": ["677272994783"]
+        }],
+  "provisioners": [
+    {
+      "type": "shell",
+    "inline": [
+      "sudo yum update -y",
+      "sudo yum install -y python3 python3-devel python3-pip",
+      "sudo pip3 install flask flask_sqlalchemy pymysql",
+      "sudo yum install -y python3-sqlalchemy",
+      "sudo pip3 install python-dotenv",
+      "sudo pip3 install boto3",
+      "sudo yum install amazon-cloudwatch-agent -y",
+      "sudo mkdir -p /home/ec2-user/webapp",
+      "sudo chown -R ec2-user:ec2-user /home/ec2-user/webapp",
+      "sudo chown -R ec2-user:ec2-user /etc/systemd/system" 
+      ]
+    },
+    {
+      "type": "file",
+      "source": "app.py",
+      "destination": "/home/ec2-user/webapp/app.py"
+    },
+{
+      "type": "file",
+      "source": "requirements.txt",
+      "destination": "/home/ec2-user/webapp/requirements.txt"
+    },
+
+{
+      "type": "file",
+      "source": "app.service",
+      "destination": "/etc/systemd/system/app.service"
+    },
+
+{
+      "type": "file",
+      "source": "cloudwatch-config.json",
+      "destination": "/home/ec2-user/webapp/cloudwatch-config.json"
+    },
+
+{
+  "type": "shell",
+  "inline": ["sudo chmod 640 /home/ec2-user/webapp/cloudwatch-config.json"]
+},
+
+{
+      "type": "shell",
+    "inline": [
+"cd /home/ec2-user/webapp",
+"sudo pip3 install -r requirements.txt"
+]
+},
+
+{
+      "type": "shell",
+    "inline": ["sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/home/ec2-user/webapp/cloudwatch-config.json -s"]
+}
+
+],
+	
+  "post-processors": [
+    {
+      "type": "manifest",
+      "output": "manifest.json",
+      "strip_path": true
+    }
+  ]
+}

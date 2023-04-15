@@ -1,0 +1,11 @@
+Flask
+Flask-SQLAlchemy
+bcrypt
+regex
+jinja2
+sqlalchemy-utils
+boto3
+python-dotenv
+botocore
+watchtower
+statsd
