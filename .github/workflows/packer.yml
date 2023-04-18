@@ -1,4 +1,4 @@
-name: Build AMI
+name: Packer and Terraform
 on: push
 jobs:
   build-ami:
@@ -31,3 +31,42 @@ jobs:
           
     - name: Print manifest.json
       run: cat ami/manifest.json
+      
+    - name: Install AWS CLI
+      run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --update
+          
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - name: Initialize Terraform
+      run: |
+        cd aws-infra
+        terraform init
+        
+    - name: Format Terraform
+      run: |
+        cd aws-infra
+        terraform fmt
+          
+    - name: Copy AMI id
+      run: |
+          cd aws-infra
+          AMI_ID=$(jq -r '.builds[-1].artifact_id' ./ami/manifest.json | cut -d ":" -f2)
+          echo $AMI_ID
+    
+    - name: Use values.tfvars file
+      run: |
+        cd aws-infra
+        echo "${{ secrets.VALUES_TF }}" > values.tfvars
+
+    - name: Apply Terraform to build infrastructure
+      run: |
+        cd aws-infra
+        terraform apply -var-file=values.tfvars -var="ami=$AMI_ID" --auto-approve
+      env:  
+        AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: us-east-2
