@@ -1,12 +1,10 @@
 name: 'Terraform Apply'
 
-on:
-  push:
-    branches:
-      - main
+on: push
 
 jobs:
   terraform:
+    needs: build-ami
     name: 'Terraform'
     runs-on: ubuntu-latest
 
