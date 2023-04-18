@@ -8,8 +8,6 @@ data "template_file" "user_data" {
     echo "password=${var.dbpassword}" >> /home/ec2-user/webapp/.env
     echo "host=${aws_db_instance.csye6225db.address}" >> /home/ec2-user/webapp/.env
     echo "s3=${aws_s3_bucket.private_bucket.bucket}" >> /home/ec2-user/webapp/.env
-   echo "secretkey=${var.secret_key}" >> /home/ec2-user/webapp/.env
-echo "accesskey=${var.access_key}" >> /home/ec2-user/webapp/.env
     sudo systemctl daemon-reload
     sudo systemctl daemon-reload
     sudo systemctl enable app.service
