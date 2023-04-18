@@ -1,7 +1,7 @@
 name: Terraform Apply
 on:
   workflow_run:
-    workflows: [""]
+    workflows: ["Build AMI"]
     types:
       - completed
 
@@ -27,11 +27,16 @@ jobs:
       run: |
         cd aws-infra
         terraform fmt
+    
+    - name: Create values.tf file
+      run: |
+        cd aws-infra
+        echo "${{ secrets.VALUES_TF }}" > values.tf
 
     - name: 'Apply Terraform'
       run: |
         cd aws-infra
-        terraform apply -var-file=values.tfvars --auto-approve -var="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+        terraform apply -var-file=values.tfvars --auto-approve
       env:  
         AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
