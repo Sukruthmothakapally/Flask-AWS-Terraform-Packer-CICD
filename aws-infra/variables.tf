@@ -51,16 +51,6 @@ variable "dbpassword" {
   description = "The password for the RDS instance"
 }
 
-variable "access_key" {
-  type = string
-  description = "The access key for the AWS account"
-}
-
-variable "secret_key" {
-  type = string
-  description = "The secret key for the AWS account"
-}
-
 variable "engine" {
   type = string
   description = "The name of the database engine to use for the RDS instance"
