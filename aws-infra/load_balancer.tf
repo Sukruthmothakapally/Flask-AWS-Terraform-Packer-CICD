@@ -28,7 +28,7 @@ resource "aws_lb_target_group" "alb_tg" {
 }
 
 resource "aws_lb_listener" "front_end" {
-  load_balancer_arn = aws_lb.lb.arn
+  load_balancer_arn = "arn:aws:elasticloadbalancing:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:loadbalancer/app/${aws_lb.lb.arn_suffix}"
   port              = 443
   protocol          = "HTTPS"
   certificate_arn = var.certificate
