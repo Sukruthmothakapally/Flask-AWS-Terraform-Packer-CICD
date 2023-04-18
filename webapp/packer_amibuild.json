@@ -8,12 +8,12 @@
             "type": "amazon-ebs",
             "access_key": "{{user `access_key_id`}}",
             "secret_key": "{{user `secret_access_key`}}",
-            "region": "us-west-2",
-            "source_ami": "ami-0f1a5f5ada0e7da53",
+            "region": "us-east-2",
+            "source_ami": "ami-0b0f111b5dcb2800f",
             "instance_type": "t2.micro",
             "ssh_username": "ec2-user",
             "ami_name": "webapp-{{timestamp}}",
-	    "ami_users": ["677272994783"]
+            "ami_users": ["677272994783"]
         }],
   "provisioners": [
     {
