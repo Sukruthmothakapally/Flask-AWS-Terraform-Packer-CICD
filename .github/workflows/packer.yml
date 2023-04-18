@@ -24,8 +24,9 @@ jobs:
     - name: Use values.tfvars file
       run: |
         cd aws-infra
-        printf '%s\n' "${{ secrets.VALUES }}" > values.tfvars
-        ls -all
+        cat << EOF > values.tfvars
+        ${{ secrets.VALUES }}
+        EOF
         
     - name: Print values.tfvars file
       run: |
