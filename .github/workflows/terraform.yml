@@ -1,12 +1,15 @@
-name: 'Terraform Apply'
-
-on: push
+name: Terraform Apply
+on:
+  workflow_run:
+    workflows: [""]
+    types:
+      - completed
 
 jobs:
   terraform:
-    needs: build-ami
     name: 'Terraform'
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
     - name: 'Checkout'
