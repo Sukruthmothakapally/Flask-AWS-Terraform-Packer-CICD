@@ -70,7 +70,7 @@ resource "aws_subnet" "rds_private" {
   cidr_block = "10.0.7.0/24"
   vpc_id     = aws_vpc.vpc1.id
 
-  availability_zone = "us-west-2a"
+  availability_zone = "us-east-2a"
 
   tags = {
     Name = "private-1"
@@ -81,7 +81,7 @@ resource "aws_subnet" "rds_private2" {
   cidr_block = "10.0.8.0/24"
   vpc_id     = aws_vpc.vpc1.id
 
-  availability_zone = "us-west-2b"
+  availability_zone = "us-east-2b"
 
   tags = {
     Name = "private-2"
@@ -92,7 +92,7 @@ resource "aws_subnet" "rds_private3" {
   cidr_block = "10.0.9.0/24"
   vpc_id     = aws_vpc.vpc1.id
 
-  availability_zone = "us-west-2c"
+  availability_zone = "us-east-2c"
 
   tags = {
     Name = "private-3"
