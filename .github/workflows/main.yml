@@ -1,0 +1,33 @@
+name: Build AMI
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Create ami directory
+      run: |
+          mkdir ami && cp webapp/app.py webapp/requirements.txt webapp/packer_amibuild.json webapp/app.service webapp/cloudwatch-config.json ami
+          cd ami && ls -all
+          
+    - name: Check working directory
+      run: |
+          cd ami
+          pwd
+          ls -all
+          
+    - name: Build AMI using Packer
+      uses: hashicorp/packer-github-actions@master
+      with:
+          command: build
+          arguments: "-color=false -on-error=abort"
+          target: packer_amibuild.json
+          working_directory: ami
+      env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          
+    - name: Print manifest.json
+      run: cat ami/manifest.json
