@@ -62,6 +62,11 @@ jobs:
         cd aws-infra
         echo "${{ secrets.VALUES_TF }}" > values.tfvars
         ls -all
+        
+    - name: Print values.tfvars file
+      run: |
+        cd aws-infra
+        cat values.tfvars
 
     - name: Apply Terraform to build infrastructure
       run: |
