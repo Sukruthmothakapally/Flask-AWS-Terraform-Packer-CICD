@@ -43,7 +43,7 @@ else:
 #cluoudwatch metrics using statsd
 statsd = StatsClient(host='localhost', port=8125)
 
-namespace = 'counts4'
+namespace = 'API counts'
 
 logging.basicConfig(filename='flask.log', level=logging.INFO)
 
