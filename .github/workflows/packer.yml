@@ -35,7 +35,7 @@ jobs:
     - name: Apply Terraform to build infrastructure
       run: |
         cd aws-infra
-        terraform apply -var-file=values.tfvars -var="ami=ami-0eed536746f76fc0d" --auto-approve
+        terraform apply -var-file=values.tfvars --auto-approve
       env:  
         AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
