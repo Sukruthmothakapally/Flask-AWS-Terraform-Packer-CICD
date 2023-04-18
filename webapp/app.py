@@ -22,8 +22,6 @@ load_dotenv()
 
 # S3 bucket details
 BUCKET_NAME = os.getenv("s3")
-S3_ACCESS_KEY = os.getenv("accesskey")
-S3_SECRET_KEY = os.getenv("secretkey")
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -48,8 +46,7 @@ namespace = 'API counts'
 logging.basicConfig(filename='flask.log', level=logging.INFO)
 
 # Initialize S3 client
-s3 = boto3.client('s3', aws_access_key_id=S3_ACCESS_KEY, aws_secret_access_key=S3_SECRET_KEY)
-
+s3 = boto3.client('s3')
 
 Base = declarative_base()
 
@@ -591,7 +588,6 @@ def delete_image(product_id, image_id):
     session.commit()
 
     return 'Image deleted successfully', 200
-
 
 # Run app
 if __name__ == '__main__':
