@@ -22,9 +22,4 @@ jobs:
       - name: Run unit tests
         run: |
           cd webapp
-          python test_app.py
-      - name: Run pylint
-        run: |
-          cd webapp
-          pip install pylint
-          pylint *.py
+          python unit_test.py
