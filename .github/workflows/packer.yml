@@ -68,10 +68,21 @@ jobs:
         AWS_DEFAULT_REGION: us-east-2
         
     - name: Build AWS infrastructure using Terraform 
+      id: apply
       run: |
         cd aws-infra
         terraform apply -var-file=values.tfvars --auto-approve -var="ami=$AMI_ID"
       env:  
+        AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: us-east-2
+
+    - name: Destroy Terraform resources if apply failed
+      if: ${{ failure() }}
+      run: |
+        cd aws-infra
+        terraform destroy -var-file=values.tfvars --auto-approve -var="ami=$AMI_ID"
+      env:
         AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: us-east-2
