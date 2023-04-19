@@ -1,0 +1,14 @@
+# Flask
+*.pyc
+__pycache__/
+instance/
+.webassets-cache
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# Packer
+packer_cache/
+output-*/
