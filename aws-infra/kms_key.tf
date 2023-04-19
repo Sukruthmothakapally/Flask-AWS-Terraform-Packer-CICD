@@ -2,7 +2,7 @@ resource "aws_kms_key" "rds_encrypt" {
   description = "RDS encryption key"
 }
 
-resource "aws_kms_key" "ebs_encrypt" { 
+resource "aws_kms_key" "ebs_encrypt" {
   description              = "ebs encryption"
   key_usage                = "ENCRYPT_DECRYPT"
   customer_master_key_spec = "SYMMETRIC_DEFAULT"

@@ -1,6 +1,6 @@
 resource "aws_lb" "lb" {
-  name = "csye6225-lb"
-  internal = false
+  name               = "csye6225-lb"
+  internal           = false
   load_balancer_type = "application"
   subnets            = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id, aws_subnet.public_subnet_3.id]
   security_groups    = [aws_security_group.load_balancer.id]
@@ -31,7 +31,7 @@ resource "aws_lb_listener" "front_end" {
   load_balancer_arn = aws_lb.lb.arn
   port              = 443
   protocol          = "HTTPS"
-  certificate_arn = var.certificate
+  certificate_arn   = var.certificate
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.alb_tg.arn

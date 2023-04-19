@@ -27,7 +27,7 @@ resource "aws_db_instance" "csye6225db" {
   vpc_security_group_ids = [
     aws_security_group.rds_sg.id
   ]
-  
+
   storage_encrypted = true
   kms_key_id        = aws_kms_key.rds_encrypt.arn
 

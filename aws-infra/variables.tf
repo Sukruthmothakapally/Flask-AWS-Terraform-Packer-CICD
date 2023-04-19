@@ -1,3 +1,8 @@
+variable "region" {
+  type        = string
+  description = "The AWS region in which to create the VPC and networking resources."
+}
+
 variable "vpc_name" {
   type        = string
   description = "The name of the VPC to create."
@@ -24,14 +29,14 @@ variable "availability_zones" {
 }
 
 variable "public_route_table_enabled" {
-  type    = bool
-  default = false
+  type        = bool
+  default     = false
   description = "Indicates whether a public route table should be created or not"
 }
 
 variable "private_route_table_enabled" {
-  type    = bool
-  default = false
+  type        = bool
+  default     = false
   description = "Indicates whether a private route table should be created or not"
 }
 
@@ -52,32 +57,32 @@ variable "dbpassword" {
 }
 
 variable "engine" {
-  type = string
+  type        = string
   description = "The name of the database engine to use for the RDS instance"
 }
 variable "engineversion" {
-  type = string
+  type        = string
   description = "The version of the database engine to use for the RDS instance"
 }
 variable "instance" {
-  type = string
+  type        = string
   description = "The type of RDS instance to launch"
 }
 variable "identifier" {
-  type = string
+  type        = string
   description = "The identifier for the RDS instance"
 }
 variable "username" {
-  type = string
+  type        = string
   description = "The username to use for the RDS instance"
 }
 variable "dbname" {
-  type = string
+  type        = string
   description = "The name of the database to create"
 }
 
 variable "hosted_zone_id" {
-  type = string
+  type        = string
   description = "The ID of the hosted zone for the domain"
 }
 
@@ -92,6 +97,6 @@ variable "certificate" {
 }
 
 variable "aws_account_id" {
-  type = string
+  type        = string
   description = "The ID of the AWS account"
 }

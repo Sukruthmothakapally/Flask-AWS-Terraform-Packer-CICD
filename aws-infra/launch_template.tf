@@ -14,7 +14,7 @@ data "template_file" "user_data" {
     sudo systemctl restart app.service
     sudo systemctl start app.service
  EOF
- 
+
 }
 
 resource "aws_launch_template" "lt" {
@@ -22,7 +22,7 @@ resource "aws_launch_template" "lt" {
   image_id      = var.ami
   instance_type = var.instance_type
   key_name      = var.key_name
-  user_data = base64encode(data.template_file.user_data.rendered)
+  user_data     = base64encode(data.template_file.user_data.rendered)
   iam_instance_profile {
     name = aws_iam_instance_profile.ec2_instance_profile.name
   }
