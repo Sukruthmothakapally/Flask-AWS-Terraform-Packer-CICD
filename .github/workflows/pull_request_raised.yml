@@ -19,12 +19,15 @@ jobs:
           cd webapp
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - name: Run unit tests
-        run: |
-          cd webapp
-          python test_app.py
+      
       - name: Run pylint
         run: |
           cd webapp
           pip install pylint
           pylint *.py
+      
+      - name: Run unit tests
+        run: |
+          cd webapp
+          python unit_test.py
+      
