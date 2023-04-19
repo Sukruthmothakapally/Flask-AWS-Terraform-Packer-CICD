@@ -6,7 +6,31 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2.5.0
-      
+     
+    - name: Create ami directory
+      run: |
+          mkdir ami && cp webapp/app.py webapp/requirements.txt webapp/packer_amibuild.json webapp/app.service webapp/cloudwatch-config.json ami
+          cd ami && ls -all
+          
+    - name: Check working directory
+      run: |
+          cd ami
+          pwd
+          ls -all
+          
+    - name: Build AMI using Packer
+      uses: hashicorp/packer-github-actions@master
+      with:
+          command: build
+          arguments: "-color=false -on-error=abort"
+          target: packer_amibuild.json
+          working_directory: ami
+      env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          
+    - name: Print manifest.json
+      run: cat ami/manifest.json
           
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
@@ -21,31 +45,32 @@ jobs:
         cd aws-infra
         terraform fmt
         
+    - name: Copy AMI ID
+      run: |
+          cd aws-infra
+          AMI_ID=$(jq -r '.builds[-1].artifact_id' ../ami/manifest.json | cut -d ":" -f2)
+          echo $AMI_ID
+        
     - name: Use values.tfvars file
       run: |
         cd aws-infra
         cat << EOF > values.tfvars
         ${{ secrets.VALUES }}
         EOF
-        
-    - name: Print values.tfvars file
-      run: |
-        cd aws-infra
-        cat values.tfvars
 
     - name: Plan Terraform
       run: |
         cd aws-infra
-        terraform plan -var-file=values.tfvars
+        terraform plan -var-file=values.tfvars -var="ami=$AMI_ID"
       env:  
         AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: us-east-2
         
-    - name: Build infrastructure using Terraform 
+    - name: Build AWS infrastructure using Terraform 
       run: |
         cd aws-infra
-        terraform apply -var-file=values.tfvars --auto-approve
+        terraform apply -var-file=values.tfvars --auto-approve -var="ami=$AMI_ID"
       env:  
         AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
