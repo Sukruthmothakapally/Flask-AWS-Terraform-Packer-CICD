@@ -3,7 +3,7 @@ on:
   pull_request:
 
 jobs:
-  test:
+  unit-test:
     runs-on: ubuntu-latest
     env:
       DISABLE_DATABASE: true
