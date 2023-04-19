@@ -1,7 +1,7 @@
 name: Packer and Terraform
 on: workflow_dispatch
 jobs:
-  build-ami:
+  aws-infra:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -52,7 +52,7 @@ jobs:
           AMI_ID=$(jq -r '.builds[-1].artifact_id' ../ami/manifest.json | cut -d ":" -f2)
           echo $AMI_ID
         
-    - name: Use values.tfvars file
+    - name: Use values.tfvars from secrets 
       run: |
         cd aws-infra
         cat << EOF > values.tfvars
