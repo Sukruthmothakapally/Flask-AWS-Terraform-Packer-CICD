@@ -20,23 +20,20 @@ jobs:
       run: |
         cd aws-infra
         terraform fmt
-    
-    - name: Use values.tfvars file
-      run: |
-        cd aws-infra
-        cat << EOF > values.tfvars
-        ${{ secrets.VALUES }}
-        EOF
-        
-    - name: Print values.tfvars file
-      run: |
-        cd aws-infra
-        cat values.tfvars
 
-    - name: Apply Terraform to build infrastructure
+    - name: Plan Terraform
       run: |
         cd aws-infra
         terraform plan -var-file=values.tfvars
+      env:  
+        AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: us-east-2
+        
+    - name: Build infrastructure using Terraform 
+      run: |
+        cd aws-infra
+        terraform apply -var-file=values.tfvars --auto-approve
       env:  
         AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
