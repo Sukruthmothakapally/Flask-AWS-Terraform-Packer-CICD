@@ -17,20 +17,7 @@ jobs:
           cd ami
           pwd
           ls -all
-          
-    - name: Build AMI using Packer
-      uses: hashicorp/packer-github-actions@master
-      with:
-          command: build
-          arguments: "-color=false -on-error=abort"
-          target: packer_amibuild.json
-          working_directory: ami
-      env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          
-    - name: Print manifest.json
-      run: cat ami/manifest.json
+  
           
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
@@ -45,11 +32,7 @@ jobs:
         cd aws-infra
         terraform fmt
         
-    - name: Copy AMI ID
-      run: |
-          cd aws-infra
-          AMI_ID=$(jq -r '.builds[-1].artifact_id' ../ami/manifest.json | cut -d ":" -f2)
-          echo $AMI_ID
+
         
     - name: Use values.tfvars file
       run: |
@@ -61,8 +44,17 @@ jobs:
     - name: Plan Terraform
       run: |
         cd aws-infra
-        terraform plan -var-file=values.tfvars -var="ami=$AMI_ID"
+        terraform plan -var-file=values.tfvars -var="ami=ami-09a63b310aca20781"
       env:  
+        AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: us-east-2
+        
+    - name: Refresh Terraform
+      run: |
+        cd aws-infra
+        terraform refresh -var-file=values.tfvars -var="ami=ami-09a63b310aca20781"
+      env:
         AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: us-east-2
@@ -71,7 +63,7 @@ jobs:
       id: apply
       run: |
         cd aws-infra
-        terraform apply -var-file=values.tfvars --auto-approve -var="ami=$AMI_ID"
+        terraform apply -var-file=values.tfvars --auto-approve -var="ami=ami-09a63b310aca20781"
       env:  
         AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
@@ -81,7 +73,7 @@ jobs:
       if: ${{ failure() }}
       run: |
         cd aws-infra
-        terraform destroy -var-file=values.tfvars --auto-approve -var="ami=$AMI_ID"
+        terraform destroy -var-file=values.tfvars --auto-approve -var="ami=ami-09a63b310aca20781"
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
