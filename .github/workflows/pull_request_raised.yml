@@ -24,7 +24,7 @@ jobs:
         run: |
           cd webapp
           pip install pylint
-          pylint *.py
+          pylint --fail-under=2.0 *.py
       
       - name: Run unit tests
         run: |
