@@ -25,7 +25,7 @@ resource "aws_iam_role_policy_attachment" "CloudWatch_policy_attachment" {
 }
 
 resource "aws_iam_instance_profile" "ec2_instance_profile" {
-  name = "EC2InstanceProfile-CSYE6225"
+  name = "EC2InstanceProfile"
 
   role = aws_iam_role.EC2-CSYE6225.name
 }
