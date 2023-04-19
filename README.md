@@ -49,7 +49,7 @@ To clone the project repository, run the following command in your terminal:
 To use the application locally, navigate to the webapp directory and run the following command:
   - pip install -r requirements
   - python app.py
-  - <note : Might need to setup database connection accordingly>
+  - note : Might need to setup database connection accordingly
 
 ## Cloud Deployment
 - Step 1 - Get a SSL certificate from Namecheap or any other provider. Import SSL certificate to AWS using the below command -
