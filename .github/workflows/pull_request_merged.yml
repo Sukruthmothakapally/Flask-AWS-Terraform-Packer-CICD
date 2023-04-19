@@ -59,7 +59,7 @@ jobs:
         env:
             AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
-            AWS_DEFAULT_REGION: us-west-2
+            AWS_DEFAULT_REGION: us-east-2
         working-directory: webapp/ami
         run: |
           AMI_ID=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2)
@@ -75,7 +75,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-west-2
+          AWS_DEFAULT_REGION: us-east-2
           
         run: |
           aws autoscaling start-instance-refresh --auto-scaling-group-name csye6225-asg-spring2023
