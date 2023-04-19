@@ -7,7 +7,6 @@ availability_zones          = ["us-east-2a", "us-east-2b", "us-east-2c"]
 internet_gateway_enabled    = true
 public_route_table_enabled  = true
 private_route_table_enabled = true
-ami                         = "ami-0eed536746f76fc0d"
 instance_type               = "t2.micro"
 key_name                    = "ohiokey"
 dbpassword                  = "hello123!"
