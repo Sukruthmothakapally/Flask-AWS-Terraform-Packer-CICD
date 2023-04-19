@@ -20,6 +20,18 @@ jobs:
       run: |
         cd aws-infra
         terraform fmt
+        
+    - name: Use values.tfvars file
+      run: |
+        cd aws-infra
+        cat << EOF > values.tfvars
+        ${{ secrets.VALUES }}
+        EOF
+        
+    - name: Print values.tfvars file
+      run: |
+        cd aws-infra
+        cat values.tfvars
 
     - name: Plan Terraform
       run: |
